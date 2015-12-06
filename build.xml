@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/*
+ * getlicense.io
+ * Copyright (C) 2014 klicap - ingeniería del puzle
+ *
+ * klicap - ingeniería del puzle, S.L.
+ *
+ * Parque Empresarial PISA
+ * C/Industria 1, Edificio Metropol 1, planta 3ª, módulo 3
+ * 41927 Mairena del Aljarafe
+ * Sevilla, España
+ *
+ * C.I.F. B-91858241
+ * hello@klicap.es | +34 664 00 06 29 | +34 954 89 43 22
+ *
+ * $Id: build.xml 104 2014-04-07 01:09:05Z recena $
+ */
+-->
+
+<project name="getlicense-website" default="dist" basedir="./">
+
+    <property file="build.properties" />
+
+    <!-- ============================================  -->
+    <!-- Target: clean                                 -->
+    <!-- ============================================  -->
+    <target name="clean">
+        <echo msg="Cleaning temporal files..." />
+        <delete>
+            <fileset dir="./assets">
+                <include name="**" />
+                <exclude name=".htaccess" />
+            </fileset>
+            <fileset dir="./protected/runtime">
+                <include name="**" />
+            </fileset>
+        </delete>
+        <delete file="./protected/config/main.php" />
+        <delete file="./index.php" />
+
+        <echo msg="Cleaning target directory..." />
+        <delete dir="./target" includeemptydirs="true" />
+    </target>
+
+    <!-- ============================================  -->
+    <!-- Target: prepare                               -->
+    <!-- ============================================  -->
+    <target name="prepare" depends="clean">
+        <echo msg="Processing resources..." />
+        <copy file="./protected/config/main.tpl.php" tofile="./protected/config/main.php">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <copy file="./index.tpl.php" tofile="./index.php">
+            <filterchain>
+                <expandproperties />
+            </filterchain>
+        </copy>
+
+        <echo msg="Making directory ./target" />
+        <mkdir dir="./target" />
+
+        <echo msg="Making directory ./target/website (output directory)" />
+        <mkdir dir="./target/website-${project.version}" />
+
+    </target>
+
+    <!-- ============================================  -->
+    <!-- Target: build                                 -->
+    <!-- ============================================  -->
+    <target name="build" depends="prepare">
+        <echo msg="Copying files to output directory..." />
+        <echo msg="Copying ./assets to ./target/website directory..." />
+        <copy todir="./target/website-${project.version}">
+            <fileset dir=".">
+                <include name="**/*" />
+                <exclude name="protected/config/main.tpl.php" />
+                <exclude name="index.tpl.php" />
+                <exclude name="target/**" />
+                <exclude name="build.xml" />
+                <exclude name="build.properties" />
+                <exclude name=".project" />
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- ============================================  -->
+    <!-- (DEFAULT)  Target: dist                       -->
+    <!-- ============================================  -->
+    <target name="dist" depends="build">
+        <echo msg="Creating archive..." />
+        <tar basedir="./target" destfile="./target/website-${project.version}.tar.gz" compression="gzip" />
+        <echo msg="Files copied and compressed in build directory OK!" />
+    </target>
+
+    <!-- ============================================  -->
+    <!-- Target: deploy                                -->
+    <!-- ============================================  -->
+    <target name="deploy" depends="dist">
+        <echo msg="Deploying binary distribution..." />
+        <scp username="deployer" pubkeyfile="/Users/recena/.ssh/id_rsa.pub" privkeyfile="/Users/recena/.ssh/id_rsa" host="getlicense.io" file="./target/website-${project.version}.tar.gz" todir="/home/klicap/getlicense" />
+        <ssh username="deployer" pubkeyfile="/Users/recena/.ssh/id_rsa.pub" privkeyfile="/Users/recena/.ssh/id_rsa" host="getlicense.io" display="false" command="cd /home/klicap/getlicense; tar -xvzf website-${project.version}.tar.gz; rm website-${project.version}.tar.gz; rm web;ln -s website-${project.version} web; chmod g+w website-${project.version}/protected/runtime" />
+        <echo msg="Deployed successfully" />
+    </target>
+
+</project>

@@ -1,0 +1,68 @@
+body {
+    background-color: #42494D;
+    font-family: Lato, sans-serif;
+    overflow: hidden !important;
+}
+
+.modal {
+    overflow-y: hidden !important;
+    top: 211px;
+}
+
+.modal .modal-content {
+    background-color: #000;
+}
+
+.modal .modal-body {
+    padding: 0;
+}
+
+.modal .modal-dialog {
+    width: 900px;
+    height: 450px;
+    margin: 0 auto;
+}
+
+h1, h2, h3 {
+    font-family: Lato, sans-serif;
+    color: #f1f0eb;
+    margin: 10px 0;
+}
+
+header {
+    padding: 20px 0;
+    text-align: center;
+}
+
+header .logo {
+    margin: 0 auto;
+    width: 50%;
+}
+
+p {
+    color: rgb(112, 112, 112);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 22px;
+}
+
+.tooltip {
+    font-size: 12px;
+    line-height: 22px;
+}
+
+a, a:hover {
+    color: #00b0ff;
+}
+
+.form-group .label {
+    display: block;
+    clear: both;
+    margin-top: 5px;
+    font-weight: 300;
+}
+
+footer {
+    padding: 0;
+    text-align: center;
+}
